@@ -8,7 +8,7 @@ the application. Anything needed for the app context will be done within the
 from flask import Flask, redirect, url_for, render_template, request
 from flask_login import LoginManager
 from flask_pymongo import PyMongo
-from models.user import User
+from .models.user import User
 import logging
 import sys
 
