@@ -3,6 +3,19 @@ App Strap
 Skeleton python2/3 application that uses Flask, implements authentication with some bare-bones user management, uses MongoDB for the backend and Twitter Bootstrap for the frontend. Purpose of the application is to provide a quick way to spin up new ideas or test out concepts without having to code the usual details.
 
 
+Start redis:
+
+    $ redis-server
+
+Start RabbiqMQ:
+
+    $ rabbitmq-server
+
+Start the Celery beat:
+
+    $ sudo celery worker -A celery_worker.celery --loglevel=info -B
+
+
 .. role:: small
 
 Inline Markup

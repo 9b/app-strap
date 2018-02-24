@@ -1,6 +1,6 @@
 """Generic calls within the application."""
 from . import core
-from .. import mongo, logger
+from .. import mongo, logger, celery
 from flask import (
     render_template, redirect, url_for, jsonify, request, Response
 )
@@ -20,6 +20,15 @@ def root():
     c = mongo.db[app.config['USERS_COLLECTION']]
     user = c.find_one({'username': current_user.get_id()})
     return render_template('index.html', name=user.get('first_name'))
+
+
+@core.route('/async-test')
+@login_required
+def heartbeat_example():
+    """Run an async job in the background."""
+    logger.debug("Executing the heartbeat task and returning")
+    celery.send_task('heartbeat')
+    return render_template('index.html', name="HEARTBEAT")
 
 
 @core.route('/settings')

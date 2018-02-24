@@ -5,17 +5,22 @@ This file will initialize all of the global variables used within the rest of
 the application. Anything needed for the app context will be done within the
 `create_app` function and returned back to the caller handler.
 """
+from .models.user import User
+from celery import Celery
+from celery.schedules import crontab
 from flask import Flask, redirect, url_for, render_template, request
 from flask_login import LoginManager
 from flask_pymongo import PyMongo
-from .models.user import User
 import logging
 import sys
 
+APP_NAME = 'app-strap'
+
 login_manager = LoginManager()
 mongo = PyMongo()
+celery = Celery(APP_NAME)
 
-logger = logging.getLogger("app-strap")
+logger = logging.getLogger(APP_NAME)
 logger.setLevel(logging.DEBUG)
 shandler = logging.StreamHandler(sys.stdout)
 fmt = '\033[1;32m%(levelname)-5s %(module)s:%(funcName)s():'
@@ -66,6 +71,17 @@ def create_app(debug=False):
     app.config['USERS_COLLECTION'] = 'accounts'
     login_manager.init_app(app)
     mongo.init_app(app)
+    app.config.update(
+        CELERY_BROKER_URL='redis://localhost:6379',
+        CELERY_RESULT_BACKEND='redis://localhost:6379',
+        CELERYBEAT_SCHEDULE={
+            'heartbeat': {
+                'task': 'heartbeat',
+                'schedule': crontab(minute='*')
+            }
+        }
+    )
+    celery.conf.update(app.config)
 
     from .core import core as core_blueprint
     app.register_blueprint(core_blueprint)
