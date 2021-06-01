@@ -15,7 +15,7 @@ MarkupSafe==1.0
 pymongo==3.6.0
 pytz==2018.3
 redis==2.10.6
-urllib3==1.22
+urllib3==1.26.5
 vine==1.1.4
 Werkzeug==0.14.1
 WTForms==2.1
